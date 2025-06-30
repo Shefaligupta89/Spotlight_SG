@@ -1,0 +1,208 @@
+---
+title: "Apartment_Sale"
+output: html_document
+date: "2025-04-10"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+#| include: false
+# Initial setup
+rm(list = ls())
+
+# Load libraries
+library(tidyverse)
+library(fredr)
+library(here)
+library(cowplot)
+library(scales)
+library(png)
+
+source("Reason theme.R")
+
+logo_path <- "reason_logo.png"
+
+# Load the logo image
+logo <- readPNG(logo_path)
+
+
+```
+
+
+
+```{r}
+
+# Manually set the FRED API key
+fredr_set_key("8c00ef6f1931dde12ceb300a553210ba")
+
+```
+
+#Number of apartments/houses built in each of the 50 largest cities in the most recent year
+```{r}
+
+states <- state.abb
+series_ids <- paste0(states, "BPPRIV")
+
+all_data <- lapply(seq_along(series_ids), function(i) {
+  Sys.sleep(0.5)
+  data <- fredr(series_id = series_ids[i], observation_start = as.Date("2020-01-01"), observation_end = as.Date("2025-12-31"))
+  data$state <- states[i]
+  return(data)
+})
+
+combined_data <- bind_rows(all_data)
+
+state_totals <- combined_data %>%
+  group_by(state) %>%
+  summarise(total_units = sum(value, na.rm = TRUE)) %>%
+  arrange(desc(total_units))
+
+```
+
+
+```{r}
+p_all <- ggplot(state_totals, aes(x = reorder(state, total_units), y = total_units)) +
+  geom_area(aes(group = 1), fill = "#d3d3d3", alpha = 0.3) +
+  geom_bar(stat = "identity", fill = "#669900", alpha = 0.8) +
+  scale_y_continuous(
+    labels = label_number(scale = 1e-3, suffix = "K"),
+    breaks = pretty_breaks(n = 6),
+    expand = expansion(mult = c(0, 0.01))
+  ) +
+  labs(
+    title = "America Is Still Building:\nHousing Units Authorized by State (2020–2025)",
+    subtitle = "Privately-Owned Residential Building Permits",
+    caption = "Source: FRED, St. Louis Fed",
+    x = NULL,
+    y = "Units (Thousands)"
+  ) +
+  theme_reason() +
+  theme(
+    panel.grid = element_blank(),
+    axis.line.x = element_blank(),       # Remove x-axis line
+    axis.ticks.x = element_line(),       # Show only ticks
+    axis.text.x = element_text(size = 10)  # Optionally reduce size
+  ) +
+  coord_flip()
+
+final_plot_all <- ggdraw(p_all) +
+  draw_image(logo, x = 0.01, y = -0.03, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+
+ggsave(here("Housing_Units_by_State_2020_2025.pdf"), final_plot_all, width = 6.2, height = 6)
+print(final_plot_all)
+
+
+```
+
+```{r}
+
+top10 <- state_totals %>% slice_max(total_units, n = 10)
+
+p_top10 <- ggplot(top10, aes(x = reorder(state, total_units), y = total_units)) +
+  geom_bar(stat = "identity", fill = "#669900", alpha = 0.8) +
+  geom_text(aes(label = comma(total_units)), hjust = 1.1, color = "white", fontface = "bold", size = 4) +
+  scale_y_continuous(labels = NULL, breaks = NULL, expand = expansion(mult = c(0, 0.01))) +
+  labs(
+    title = "Top 10 States: Housing Units Authorized (2020–2025)",
+    subtitle = "Privately-Owned Residential Building Permits",
+    caption = "Source: FRED, St. Louis Fed", x = NULL, y = NULL
+  ) +
+  theme_reason() +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(size = 12, face = "bold"),
+    plot.subtitle = element_text(size = 10)
+  ) +
+  coord_flip()
+
+final_top10 <- ggdraw(p_top10) +
+  draw_image(logo, x = 0.01, y = -0.02, width = 0.12, height = 0.12, hjust = 0, vjust = 0)
+
+ggsave(here("Top10_Housing_Units_by_State.pdf"), final_top10, width = 6.2, height = 6)
+print(final_top10)
+
+
+```
+
+```{r}
+pop_series_ids <- paste0(states, "POP")
+pop_data_list <- lapply(seq_along(pop_series_ids), function(i) {
+  Sys.sleep(0.5)
+  tryCatch({
+    fredr(series_id = pop_series_ids[i], observation_start = as.Date("2023-01-01"), observation_end = as.Date("2023-12-31")) %>% mutate(state = states[i])
+  }, error = function(e) NULL)
+})
+
+pop_data <- bind_rows(pop_data_list) %>% group_by(state) %>% summarise(population = max(value, na.rm = TRUE) * 1000)
+
+housing_per_capita <- inner_join(state_totals, pop_data, by = "state") %>%
+  mutate(units_per_1k = total_units / population * 1000) %>%
+  arrange(desc(units_per_1k))
+
+p_percap <- ggplot(housing_per_capita, aes(x = reorder(state, units_per_1k), y = units_per_1k)) +
+  geom_bar(stat = "identity", fill = "#669900", alpha = 0.8) +
+  geom_text(aes(label = round(units_per_1k, 1)), hjust = 1.1, color = "white", fontface = "bold", size = 3.5) +
+  scale_y_continuous(labels = NULL, breaks = NULL, expand = expansion(mult = c(0, 0.01))) +
+  labs(title = "Where Are Homes Being Built (Per Capita)?",
+       subtitle = "Housing Units per 1,000 Residents — 2023",
+       caption = "Source: FRED", x = NULL, y = NULL) +
+  theme_reason() + theme(panel.grid = element_blank()) + coord_flip()
+
+final_percap <- ggdraw(p_percap) + draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+ggsave(here("Housing_per_1000_Residents_2023.pdf"), final_percap, width = 6.2, height = 8)
+print(final_percap)
+
+```
+
+```{r}
+housing_10yr_data <- lapply(seq_along(series_ids), function(i) {
+  Sys.sleep(0.5)
+  tryCatch({
+    fredr(series_id = series_ids[i], observation_start = as.Date("2014-01-01"), observation_end = as.Date("2023-12-31")) %>% mutate(state = states[i])
+  }, error = function(e) NULL)
+})
+
+housing_10yr_df <- bind_rows(housing_10yr_data)
+
+state_housing_10yr_totals <- housing_10yr_df %>%
+  group_by(state) %>%
+  summarise(total_units = sum(value, na.rm = TRUE)) %>%
+  arrange(desc(total_units))
+
+top10_labels <- state_housing_10yr_totals %>% slice_max(total_units, n = 10)
+
+p_10yr <- ggplot(state_housing_10yr_totals, aes(x = reorder(state, total_units), y = total_units)) +
+  geom_area(aes(group = 1), fill = "#d3d3d3", alpha = 0.3) +
+  geom_bar(stat = "identity", fill = "#669900", alpha = 0.8) +
+  geom_text(data = top10_labels,
+            aes(label = scales::comma(total_units)),
+            hjust = 1.1, color = "white", fontface = "bold", size = 2) +
+  scale_y_continuous(
+    labels = label_number(scale = 1e-3, suffix = "K"),
+    breaks = pretty_breaks(n = 6),
+    expand = expansion(mult = c(0, 0.01))
+  ) +
+  labs(
+    title = "Total Homes Built by State (2014–2023)",
+    subtitle = "Privately-Owned Housing Units Authorized Over the Last 10 Years",
+    caption = "Source: FRED",
+    x = NULL, y = "Units (Thousands)"
+  ) +
+  theme_reason() +
+  theme(
+  panel.grid = element_blank(),
+  axis.line.x = element_blank(),
+  axis.ticks.x = element_line(),
+  axis.text.x = element_text(size = 7)  # Reduced from 10 to 7
+) +
+  coord_flip()
+
+final_10yr_plot <- ggdraw(p_10yr) + 
+  draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+
+ggsave(here("Housing_Total_Units_By_State_2014_2023_Top10_Labels.pdf"), plot = final_10yr_plot, width = 6.2, height = 6)
+print(final_10yr_plot)
+```
+
+
