@@ -1,0 +1,4 @@
+"0","# Step 1: Import and clean tax data"
+"0","tax_data <- import(here(""Property Taxes by State and County.csv"")) %>% "
+"0","  clean_names()"
+"0",""

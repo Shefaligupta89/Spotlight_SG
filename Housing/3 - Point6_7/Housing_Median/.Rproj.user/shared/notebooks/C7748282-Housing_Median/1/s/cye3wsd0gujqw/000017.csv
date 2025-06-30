@@ -1,0 +1,7 @@
+"0","city_data <- import(here(""City_Housing.csv""))"
+"0","state_data <- import(here(""State_Housing.csv""))"
+"0",""
+"0","# Automatically get the latest date column (last one)"
+"0","latest_col <- tail(names(city_data), 1) "
+"0",""
+"0",""

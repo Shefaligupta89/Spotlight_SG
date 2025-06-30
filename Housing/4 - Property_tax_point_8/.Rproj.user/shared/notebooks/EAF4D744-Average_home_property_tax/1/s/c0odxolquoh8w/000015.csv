@@ -1,0 +1,1 @@
+"0","ggsave(here(""Median_Property_Tax_Bill_State.pdf""), state_final_plot, width = 8.2, height = 8)"

@@ -1,0 +1,132 @@
+---
+title: "Average_home_property_tax"
+output: html_document
+date: "2025-04-19"
+---
+
+```{r}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(rio)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(png)
+library(cowplot)
+library(here)
+library(readr)
+library(janitor)
+library(extrafont)
+
+# Load Reason Foundation theme and logo
+source(here("Reason theme.R"))
+logo <- readPNG(here("reason_logo.png"))
+```
+
+```{r}
+
+#extrafont::font_import()
+#extrafont::loadfonts(device = "pdf")
+
+```
+
+
+#Load & Clean Data
+```{r}
+# Step 1: Import and clean tax data
+tax_data <- import(here("Property Taxes by State and County.csv")) %>% 
+  clean_names()
+
+```
+
+
+#Chart 1: Top 50 U.S. Counties by Property Tax
+```{r}
+
+# Clean and prepare tax data
+tax_data <- tax_data %>%
+  mutate(
+    median_property_tax = as.numeric(gsub("[^0-9.]", "", median_property_taxes_paid_2023_5_year_estimate)),
+    housing_value = as.numeric(gsub("[^0-9.]", "", median_housing_value_2023))
+  )
+
+# Get top 50 counties by property tax
+top_50 <- tax_data %>%
+  arrange(desc(median_property_tax)) %>%
+  slice_head(n = 50) %>%
+  mutate(county_only = county)  # Clean display name
+
+```
+
+
+##Chart 2: Median Property Tax by State
+
+```{r}
+# Calculate median property tax by state
+state_tax <- tax_data %>%
+  group_by(state) %>%
+  summarise(median_tax = median(median_property_tax, na.rm = TRUE)) %>%
+  arrange(desc(median_tax))
+
+# Create the chart
+state_chart <- ggplot(state_tax, aes(x = reorder(state, median_tax), y = median_tax)) +
+  geom_col(fill = "#ff6633", alpha = 0.9) +
+
+  # Add tax value labels inside or outside bars
+  geom_text(
+    aes(
+      label = dollar(median_tax),
+      hjust = ifelse(median_tax >= 6000, 1.1, -0.1)
+    ),
+    size = 1.5,
+    fontface = "bold",
+    family = "Roboto",
+    color = "white"
+  ) +
+
+  scale_y_continuous(
+    labels = dollar_format(),
+    expand = expansion(mult = c(0, 0.05))
+  ) +
+
+  labs(
+    title = "Median Property Tax Bill by State (2023)",
+    subtitle = "Based on 5-Year Estimates for Owner-Occupied Housing Units",
+    x = NULL,
+    y = "Median Property Taxes Paid",
+    caption = "Source: Tax Foundation, U.S. Census Bureau"
+  ) +
+
+  coord_flip(clip = "off") +
+  theme_reason() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_text(size = 9)
+  )
+
+```
+
+
+```{r}
+# Overlay Reason Foundation logo
+state_final_plot <- ggdraw(state_chart) +
+  draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+
+# Display the chart
+print(state_final_plot)
+
+# Save to PDF
+ggsave(
+  filename = here("Median_Property_Tax_Bill_State.pdf"),
+  plot = state_final_plot,
+  width = 6.2,
+  height = 6
+)
+
+
+```
+
+

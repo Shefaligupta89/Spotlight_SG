@@ -1,0 +1,180 @@
+---
+title: "Housing_Median_Zillow"
+output: html_document
+date: "2025-04-17"
+---
+
+```{r}
+library(rio)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(scales)
+library(png)
+library(cowplot)
+library(here)
+library(purrr)
+library(extrafont)
+
+
+source(here("Reason theme.R"))
+logo <- readPNG(here("reason_logo.png"))
+
+```
+
+```{r}
+library(showtext)
+
+# Automatically use showtext to render text
+showtext_auto()
+
+# Add Roboto from Google Fonts (downloads it if needed)
+font_add_google("Roboto", "Roboto")
+
+# Then use it in your ggplot theme
+theme(text = element_text(family = "Roboto"))
+
+```
+
+
+
+```{r}
+city_data <- import(here("City_Housing.csv"))
+state_data <- import(here("State_Housing.csv"))
+
+# Automatically get the latest date column (last one)
+latest_col <- tail(names(city_data), 1) 
+
+
+```
+
+
+
+```{r}
+# ========================
+# 🏙️ POINT 6: Top 50 Cities
+# ========================
+
+top_cities <- city_data %>%
+  filter(!is.na(.data[[latest_col]])) %>%
+  arrange(SizeRank) %>%
+  slice_head(n = 50) %>%
+  select(RegionName, State, Metro, SizeRank, all_of(latest_col)) %>%
+  rename(median_price = all_of(latest_col))
+
+p_city <- ggplot(top_cities, aes(x = reorder(RegionName, median_price), y = median_price)) +
+  geom_col(fill = "#ff6633", width = 0.7) +
+
+  # Add price labels inside bars
+  geom_text(aes(y = median_price / 2,
+                label = dollar(median_price, scale = 1e-3, suffix = "K")),
+            color = "white",
+            vjust = 0.5,
+            size = 1.5,
+            family = "Roboto",
+            fontface = "bold") +
+
+  scale_y_continuous(
+    labels = dollar_format(scale = 1e-3, suffix = "K"),
+    expand = expansion(mult = c(0, 0.05))
+  ) +
+
+  labs(
+    title = "Top 50 U.S. Cities by Median Home Price",
+    subtitle = "Median prices as of March 2025 [$K]",
+    caption = "Source: Zillow Home Value Index (ZHVI)",
+    x = NULL,
+    y = NULL
+  ) +
+
+  theme_reason() +
+  theme(
+    legend.position = "none",
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_text(size = 9),
+    panel.grid.major.y = element_blank(),
+    panel.grid.major.x = element_blank(),  # removes vertical grid lines
+    panel.grid.minor.x = element_blank(),  # removes minor vertical grid lines
+    axis.ticks.x = element_blank()
+  ) +
+  coord_flip()
+
+# Add logo
+final_plot_city <- ggdraw(p_city) +
+  draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+
+final_plot_city
+
+# Save the plot
+ggsave(
+  filename = here("Top_50_Cities_Median_Home_Price.pdf"),
+  plot = final_plot_city,
+  width = 6.2,
+  height = 6
+)
+
+```
+
+
+```{r}
+
+# POINT 7: Median Home Price by State
+
+state_prices <- state_data %>%
+  filter(!is.na(.data[[latest_col]])) %>%
+  select(RegionName, all_of(latest_col)) %>%
+  rename(State = RegionName, median_price = all_of(latest_col)) %>%
+  arrange(desc(median_price))
+
+p_state <- ggplot(state_prices, aes(x = reorder(State, median_price), y = median_price)) +
+  geom_col(fill = "#ff6633", width = 0.7, alpha = 0.85) +
+
+  # Add price labels inside the bars
+  geom_text(aes(y = median_price / 2,
+                label = dollar(median_price, scale = 1e-3, suffix = "K")),
+            color = "white",
+            vjust = 0.5,
+            size = 1.5,
+            family = "Roboto",
+            fontface = "bold") +
+
+  scale_y_continuous(
+    labels = dollar_format(scale = 1e-3, suffix = "K"),
+    expand = expansion(mult = c(0, 0.05))
+  ) +
+
+  labs(
+    title = "Median Home Price by State",
+    subtitle = "State median prices as of March 2025 [$K]",
+    caption = "Source: Zillow Home Value Index (ZHVI)",
+    x = NULL,
+    y = NULL
+  ) +
+
+  theme_reason() +
+  theme(
+    legend.position = "none",
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_text(size = 9),
+    panel.grid.major.y = element_blank(),
+    panel.grid.major.x = element_blank(),  # Remove vertical grid lines
+    panel.grid.minor.x = element_blank(),  # Remove minor vertical grid lines
+    axis.ticks.x = element_blank()
+  ) +
+  coord_flip()
+
+# Add logo
+final_plot_state <- ggdraw(p_state) +
+  draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+
+# Save the chart
+ggsave(
+  filename = here("Median_Home_Price_State.pdf"),
+  plot = final_plot_state,
+  width = 6.2,
+  height = 6
+)
+
+print(final_plot_state)
+
+```

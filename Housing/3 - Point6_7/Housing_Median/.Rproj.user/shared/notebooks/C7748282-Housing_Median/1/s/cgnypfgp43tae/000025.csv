@@ -1,0 +1,289 @@
+"0",""
+"0","# Combine with logo"
+"0","ggdraw(p_state) +"
+"0","  draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"
+"2","Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :"
+"2","
+ "
+"2"," font family 'Open Sans' not found in PostScript font database
+"

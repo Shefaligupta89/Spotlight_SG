@@ -1,0 +1,95 @@
+"0","#| include: false"
+"0","#initial setup"
+"0","rm(list = ls())"
+"0",""
+"0","knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)"
+"0",""
+"0","library(rio)"
+"2","Warning:"
+"2"," package ‘rio’ was built under R version 4.4.3
+"
+"2","Some optional R packages were not installed and therefore some file formats are not supported. Check file support with show_unsupported_formats()
+"
+"0","library(dplyr)"
+"2","Warning:"
+"2"," package ‘dplyr’ was built under R version 4.4.2
+"
+"2","
+Attaching package: ‘dplyr’
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+"
+"0","library(ggplot2)"
+"2","Warning:"
+"2"," package ‘ggplot2’ was built under R version 4.4.2
+"
+"0","library(scales)"
+"0","library(png)"
+"0","library(cowplot)"
+"0","library(here)"
+"2","here() starts at C:/Shefali/Reason Foundation/Newsletter/Spotlight/Housing/5 - Point10_11/Homeless_people
+"
+"0","library(readr)"
+"2","
+Attaching package: ‘readr’
+
+"
+"2","The following object is masked from ‘package:scales’:
+
+    col_factor
+
+"
+"0","library(janitor)"
+"2","Warning:"
+"2"," package ‘janitor’ was built under R version 4.4.3
+"
+"2","
+Attaching package: ‘janitor’
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    chisq.test, fisher.test
+
+"
+"0","library(extrafont)"
+"2","Registering fonts with R
+"
+"0","library(usmap)"
+"0","library(ggrepel)"
+"0",""
+"0","# Load Reason Foundation theme and logo"
+"0","source(here(""Reason theme.R""))"
+"2","Warning:"
+"2"," package ‘showtext’ was built under R version 4.4.2
+"
+"2","Loading required package: sysfonts
+"
+"2","Warning:"
+"2"," package ‘sysfonts’ was built under R version 4.4.2
+"
+"2","Loading required package: showtextdb
+"
+"2","Warning:"
+"2"," package ‘showtextdb’ was built under R version 4.4.2
+"
+"2","
+Attaching package: ‘showtextdb’
+
+"
+"2","The following object is masked from ‘package:extrafont’:
+
+    font_install
+
+"
+"0","logo <- readPNG(here(""reason_logo.png""))"
+"0",""
