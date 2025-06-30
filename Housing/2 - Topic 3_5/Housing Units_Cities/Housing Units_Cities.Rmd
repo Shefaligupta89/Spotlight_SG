@@ -1,0 +1,97 @@
+---
+title: "Housing Units_Cities"
+output: html_document
+date: "2025-04-22"
+---
+
+```{r}
+#| include: false
+#initial setup
+rm(list = ls())
+
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(rio)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(png)
+library(cowplot)
+library(here)
+library(readr)
+library(janitor)
+library(extrafont)
+
+# Load Reason Foundation theme and logo
+source(here("Reason theme.R"))
+logo <- readPNG(here("reason_logo.png"))
+
+```
+
+
+
+```{r}
+# Import MSA Units data
+msa_units <- import(here("Housing Unit_Cities.xlsx"), which = "MSA Units") %>%
+  clean_names()
+```
+
+
+```{r}
+# Clean and filter top 50 cities by total units
+top_msa <- msa_units %>%
+  select(city = name, total_units = total) %>%
+  filter(!is.na(total_units)) %>%
+  arrange(desc(total_units)) %>%
+  slice_head(n = 50)
+```
+
+#Number of apartments/houses built in each of the 50 largest cities in the most recent year (2024)
+```{r}
+city_chart <- ggplot(top_msa, aes(x = reorder(city, total_units), y = total_units)) +
+  geom_bar(stat = "identity", fill = "#2879cb", alpha = 0.85) +
+  geom_text(
+    aes(label = comma(total_units)),
+    hjust = -0.1,
+    size = 3.5,
+    color = "black"
+  ) +
+  coord_flip(clip = "off") +
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.05)),  
+    labels = NULL,
+    breaks = NULL
+  ) +
+  labs(
+    title = "Top 50 U.S. Metro Areas by New Housing Units Authorized (2024)",
+    subtitle = "Annual Building Permits by Metro Area, Measured in Housing Units",
+    x = NULL,
+    y = NULL,
+    caption = "Source: U.S. Census Bureau Building Permits Survey, 2024"
+  ) +
+  theme_reason() +
+  theme(
+    panel.grid.major.x = element_blank(),    # Remove vertical gridlines
+    panel.grid.major.y = element_blank(),    # ✅ Remove horizontal gridlines
+    panel.grid.minor = element_blank(),      # Remove minor gridlines
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank()
+  )
+
+# Add logo and save
+final_city_plot <- ggdraw(city_chart) +
+  draw_image(logo, x = 0.01, y = -0.02, width = 0.11, height = 0.11, hjust = 0, vjust = 0)
+
+# Show plot
+final_city_plot
+
+# Save output
+ggsave(
+  here("Top_50_Cities_Housing_Units_2024.pdf"),
+  final_city_plot,
+  width = 10.2,
+  height = 8
+)
+
+```

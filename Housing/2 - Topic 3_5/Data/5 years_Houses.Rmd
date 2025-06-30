@@ -1,0 +1,396 @@
+---
+title: "5 years_housing"
+output: html_document
+date: "2025-05-06"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+#| include: false
+# Initial setup
+rm(list = ls())
+
+# Load libraries
+library(readxl)
+library(dplyr)
+library(ggplot2)
+library(janitor)
+library(stringr)
+library(ggthemes)
+library(tidyverse)
+library(here)
+library(cowplot)
+library(scales)
+library(png)
+library(rio)
+library(extrafont)
+
+
+source(here("Reason theme.R"))
+logo <- readPNG(here("reason_logo.png"))
+
+```
+
+
+```{r}
+library(rio)
+
+# Load the files directly if your working directory is already set correctly
+df_2024 <- import("msaannual_2024.xls")
+df_2023 <- import("msaannual_2023.xls")
+df_2022 <- import("msaannual_2022.xls")
+df_2021 <- import("msaannual_2021.xls")
+df_2020 <- import("msaannual_2020.xls")
+df_2019 <- import("msaannual_2019.xls")
+
+
+```
+
+
+```{r}
+# Combine all years (excluding 2024 for now)
+combined_df <- bind_rows(
+  df_2019 %>% mutate(Year = 2019),
+  df_2020 %>% mutate(Year = 2020),
+  df_2021 %>% mutate(Year = 2021),
+  df_2022 %>% mutate(Year = 2022),
+  df_2023 %>% mutate(Year = 2023)
+)
+
+```
+
+```{r}
+# Extract State abbreviation from 'Name' column (last 2 characters)
+combined_df <- combined_df %>%
+  mutate(State = str_sub(Name, -2))
+
+
+```
+
+```{r}
+colnames(combined_df)
+
+```
+
+
+# 2. Chart: Total Number of Houses Built in Each State (2019–2023)
+```{r}
+
+# Aggregate top 20 states
+state_total <- combined_df %>%
+  group_by(State) %>%
+  summarise(Total_Units = sum(Total, na.rm = TRUE)) %>%
+  arrange(desc(Total_Units)) %>%
+  slice(1:20)
+
+# Plot the chart
+p1 <- ggplot(state_total, aes(x = reorder(State, Total_Units), y = Total_Units)) +
+  geom_col(width = 0.7, fill = "#2879cb") +
+  geom_text(aes(y = Total_Units / 2, label = comma(Total_Units)),
+            color = "white", vjust = 0.5, size = 3.5) +
+  scale_y_continuous(
+    labels = label_number(scale = 1e-3, suffix = "K"),
+    expand = expansion(mult = c(0, 0.05))
+  ) +
+  labs(
+    title = "Total Houses Built by State (2019–2023)",
+    subtitle = "Top 20 states by total residential construction",
+    caption = "Source: United States Census Bureau",
+    x = NULL, y = NULL
+  ) +
+  coord_flip() +
+  theme_reason() +
+  theme(
+  legend.position = "none",
+  axis.ticks.y = element_blank(),
+  axis.text.y = element_text(size = 10),
+  panel.grid.major.y = element_blank(),
+  panel.grid.major.x = element_blank(),       # Remove vertical grid lines
+  panel.grid.minor.x = element_blank(),       # Optional: remove minor vertical lines
+  axis.ticks.x = element_blank(),
+  plot.margin = margin(t = 10, r = 10, b = 30, l = 10),
+  plot.caption = element_text(hjust = 1, size = 9)
+)
+
+# Final chart with logo
+final_plot <- ggdraw(p1) +
+  draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+
+# Display and save
+print(final_plot)
+ggsave(here("Top_States_2019_2023.pdf"), final_plot, width = 6.5, height = 6.5)
+
+```
+
+#Number of apartments/houses built in each of the 50 largest cities in the last 5 years (2019–2023)
+```{r}
+
+# Aggregate by metro area name (top 50)
+city_total <- combined_df %>%
+  group_by(Name) %>%
+  summarise(Total_Units = sum(Total, na.rm = TRUE)) %>%
+  arrange(desc(Total_Units)) %>%
+  slice(1:50)
+
+# Find max value for clean axis limit
+max_val <- max(city_total$Total_Units, na.rm = TRUE)
+rounded_max <- ceiling(max_val / 50000) * 50000  # round up to nearest 50K
+
+# Plot with updated x-axis scale
+p2 <- ggplot(city_total, aes(x = reorder(Name, Total_Units), y = Total_Units)) +
+  geom_col(width = 0.7, fill = "#2879cb") +
+  geom_text(aes(y = Total_Units / 2, label = comma(Total_Units)),
+            color = "white", vjust = 0.5, size = 3.3) +
+  scale_y_continuous(
+    labels = label_number(scale = 1e-3, suffix = "K"),
+    breaks = seq(0, rounded_max, by = 50000),
+    limits = c(0, rounded_max),
+    expand = expansion(mult = c(0, 0.02))
+  ) +
+  labs(
+    title = "Top 50 Metro Areas by Residential Units Built (2019–2023)",
+    subtitle = "Apartments and houses built, by metro area",
+    caption = "Source: United States Census Bureau",
+    x = NULL, y = NULL
+  ) +
+  coord_flip() +
+  theme_reason() +
+  theme(
+  legend.position = "none",
+  axis.ticks.y = element_blank(),
+  axis.text.y = element_text(size = 9),
+  axis.ticks.x = element_blank(),
+  panel.grid.major = element_blank(),  # Removes both major x and y grid lines
+  panel.grid.minor = element_blank()   # Removes both minor x and y grid lines
+)
+
+# Add logo
+final_plot_city <- ggdraw(p2) +
+  draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+
+# Display & Save
+print(final_plot_city)
+ggsave(here("Top_50_Cities_Housing_2019_2023.pdf"), final_plot_city, width = 10, height = 12)
+
+
+```
+
+#Top 10 Metro Areas by Residential Units Built (2019–2023)
+```{r}
+# Top 10 metro areas
+city_top10 <- city_total %>%
+  slice(1:10)
+
+# Round up for clean axis breaks
+max_val_10 <- max(city_top10$Total_Units, na.rm = TRUE)
+rounded_max_10 <- ceiling(max_val_10 / 50000) * 50000  # Nearest 50K
+
+# Chart for top 10 metro areas
+p_top10 <- ggplot(city_top10, aes(x = reorder(Name, Total_Units), y = Total_Units)) +
+  geom_col(width = 0.7, fill = "#2879cb") +
+  geom_text(aes(y = Total_Units / 2, label = comma(Total_Units)),
+            color = "white", vjust = 0.5, size = 3.5) +
+  scale_y_continuous(
+    labels = label_number(scale = 1e-3, suffix = "K"),
+    breaks = seq(0, rounded_max_10, by = 50000),
+    limits = c(0, rounded_max_10),
+    expand = expansion(mult = c(0, 0.02))
+  ) +
+  labs(
+    title = "Top 10 Metro Areas by Residential Units Built (2019–2023)",
+    subtitle = "Apartments and houses built, by metro area",
+    caption = "Source: United States Census Bureau",
+    x = NULL, y = NULL
+  ) +
+  coord_flip() +
+  theme_reason() +
+  theme(
+  legend.position = "none",
+  axis.ticks.y = element_blank(),
+  axis.text.y = element_text(size = 9),
+  axis.ticks.x = element_blank(),
+  panel.grid.major = element_blank(),  # Removes both major x and y grid lines
+  panel.grid.minor = element_blank()   # Removes both minor x and y grid lines
+)
+
+# Final plot with logo
+final_plot_city_10 <- ggdraw(p_top10) +
+  draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+
+# Display & Save
+print(final_plot_city_10)
+ggsave(here("Top_10_Cities_Housing_2019_2023.pdf"), final_plot_city_10, width = 7.5, height = 6.5)
+
+
+```
+
+#Growth in Housing Units Over Time (Yearly Trend)
+```{r}
+# 1. Total Residential Units Built by Year (2019–2023)
+yearly_trend <- combined_df %>%
+  group_by(Year) %>%
+  summarise(Total_Units = sum(Total, na.rm = TRUE))
+
+p_yearly <- ggplot(yearly_trend, aes(x = factor(Year), y = Total_Units)) +
+  geom_col(fill = "#2879cb", width = 0.6) +
+  geom_text(aes(label = comma(Total_Units)), vjust = -0.5, size = 3.5) +
+  scale_y_continuous(labels = label_number(scale = 1e-3, suffix = "K")) +
+  labs(
+    title = "Total Residential Units Built by Year (2019–2023)",
+    subtitle = "Year-over-year housing construction trend",
+    caption = "Source: United States Census Bureau",
+    x = NULL, y = NULL
+  ) +
+  theme_reason() +
+  theme(
+    panel.grid = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+final_plot_yearly <- ggdraw(p_yearly) +
+  draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+print(final_plot_yearly)
+ggsave(here("Total_Residential_Units_Built_by_Year.pdf"), final_plot_yearly, width = 6.2, height = 6)
+
+```
+
+#Unit Type Breakdown (2019–2023)
+
+```{r}
+# Summarize total by unit type (2019–2023)
+unit_type_breakdown <- combined_df %>%
+  summarise(
+    `1-Unit` = sum(`1 Unit`, na.rm = TRUE),
+    `2-Unit` = sum(`2 Units`, na.rm = TRUE),
+    `3–4 Unit` = sum(`3 and 4 Units`, na.rm = TRUE),
+    `5+ Unit` = sum(`5 Units or More`, na.rm = TRUE)
+  ) %>%
+  pivot_longer(cols = everything(), names_to = "Unit_Type", values_to = "Total_Units")
+
+# Plot
+p_unit_type <- ggplot(unit_type_breakdown, aes(x = reorder(Unit_Type, Total_Units), y = Total_Units)) +
+  geom_col(width = 0.6, fill = "#2879cb") +
+  geom_text(aes(y = Total_Units / 2, label = comma(Total_Units)),
+            color = "white", vjust = 0.5, size = 3.5) +
+  scale_y_continuous(labels = label_number(scale = 1e-3, suffix = "K")) +
+  labs(
+    title = "Total Units Built by Type (2019–2023)",
+    subtitle = "Breakdown of housing by number of units",
+    caption = "Source: United States Census Bureau",
+    x = NULL, y = NULL
+  ) +
+  theme_reason() +
+  theme(
+    panel.grid = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+# Final chart with logo
+final_plot_units <- ggdraw(p_unit_type) +
+  draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+
+# Save
+print(final_plot_units)
+ggsave(here("Housing_Breakdown_by_Unit_Type_2019_2023.pdf"), final_plot_units, width = 6.2, height = 6)
+
+```
+
+# Top Growing States (2019 vs. 2023)
+```{r}
+# Calculate total per state per year
+state_yearly <- combined_df %>%
+  filter(Year %in% c(2019, 2023)) %>%
+  group_by(State, Year) %>%
+  summarise(Total_Units = sum(Total, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(names_from = Year, values_from = Total_Units, names_prefix = "Year_") %>%
+  mutate(Growth_Percent = ((Year_2023 - Year_2019) / Year_2019) * 100) %>%
+  arrange(desc(Growth_Percent)) %>%
+  slice(1:10)
+
+# Plot
+p_growth <- ggplot(state_yearly, aes(x = reorder(State, Growth_Percent), y = Growth_Percent)) +
+  geom_col(fill = "#2879cb", width = 0.6) +
+  geom_text(aes(label = paste0(round(Growth_Percent, 1), "%")), vjust = -0.5, size = 3.5) +
+  scale_y_continuous(labels = label_percent(scale = 1)) +
+  labs(
+    title = "Top 10 States by Housing Construction Growth",
+    subtitle = "Percent change in residential units built, 2019–2023",
+    caption = "Source: United States Census Bureau",
+    x = NULL, y = NULL
+  ) +
+  theme_reason() +
+  theme(
+    panel.grid = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    plot.title = element_text(size = 13, face = "bold"),
+    plot.subtitle = element_text(size = 11)
+  )
+
+# Final plot with logo
+final_plot_growth <- ggdraw(p_growth) +
+  draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+
+# Display & save
+print(final_plot_growth)
+ggsave(here("Top_Growing_States_2019_2023.pdf"), final_plot_growth, width = 6.2, height = 6)
+
+```
+
+#Top Metro Areas for Multi-Family Units (5+ units)
+
+```{r}
+# Summarize multi-family units (5+ units) by metro area
+multi_family_top <- combined_df %>%
+  group_by(Name) %>%
+  summarise(Multi_Family_Units = sum(`5 Units or More`, na.rm = TRUE)) %>%
+  arrange(desc(Multi_Family_Units)) %>%
+  slice(1:15)  # Top 15 metro areas
+
+# Chart
+p_multi <- ggplot(multi_family_top, aes(x = reorder(Name, Multi_Family_Units), y = Multi_Family_Units)) +
+  geom_col(width = 0.7, fill = "#2879cb") +
+  geom_text(aes(y = Multi_Family_Units / 2, label = comma(Multi_Family_Units)),
+            color = "white", vjust = 0.5, size = 3.5) +
+  scale_y_continuous(labels = label_number(scale = 1e-3, suffix = "K")) +
+  labs(
+    title = "Top Metro Areas for Multi-Family Units (2019–2023)",
+    subtitle = "Residential units in structures with 5 or more dwellings",
+    caption = "Source: United States Census Bureau",
+    x = NULL, y = NULL
+  ) +
+  coord_flip() +
+  theme_reason() +
+  theme(
+    panel.grid = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_text(size = 10)
+  )
+
+# Add logo
+final_plot_multi <- ggdraw(p_multi) +
+  draw_image(logo, x = 0.01, y = -0.04, width = 0.14, height = 0.14, hjust = 0, vjust = 0)
+
+# Display & save
+print(final_plot_multi)
+ggsave(here("Top_Metro_Multi_Family_Units_2019_2023.pdf"), final_plot_multi, width = 8, height = 6.5)
+
+```
+
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+```
+
